@@ -100,8 +100,6 @@ var init_user = function(username){
 // })
 
 
-    
-
 
 var next_word = function(refresh_word=true){
     console.log('next word')
@@ -120,8 +118,14 @@ var next_word = function(refresh_word=true){
     }
 
     var url = `https://duolingo-lexicon-prod.duolingo.com/api/1/search?exactness=1&languageId=${lang_id}&query=${word}&uiLanguageId=${lang_id_ui}`
+    console.log(url)
     $.getJSON(url, function(data){
         window.d = data;
+        if(d.results.length == 0){
+            console.log('skipping word, no translation found for: ' + word)
+            next_word(refresh_word=true)
+        }
+
         var translations = $.map( d.results, function( val ) {
         // Keep exact matches only
         if(!val.exactMatch) return(null)
