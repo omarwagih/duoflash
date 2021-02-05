@@ -5,6 +5,8 @@ Array.prototype.sample = function(){
 }
 
 
+window.flip_language = false
+
 $(document).ready(function(){
     $('#username').keypress(function (e) {
         if (e.which == 13) {
@@ -12,7 +14,18 @@ $(document).ready(function(){
             return false;
         }
       });
+
+    $('#flip-language').change(function(){
+        if($('#flip-language').is(':checked')){
+            window.flip_language = true
+        }else{
+            window.flip_language = false
+        }
+        next_word(refresh_word=false)
+    })
 });
+
+
 
 var init_user = function(username){
     console.log('Initializing user:' + username)
@@ -92,15 +105,21 @@ var init_user = function(username){
     
 
 
-var next_word = function(){
+var next_word = function(refresh_word=true){
     console.log('next word')
 
-    var w = lang_data[0].learned_words
-    window.word = w.sample();
+    if(refresh_word){
+        var w = lang_data[0].learned_words
+        window.word = w.sample();
+    }
     var lang_id_ui = lang_data[0].lang_id_ui
     var lang_id = lang_data[0].lang_id
 
-    $('#translate-from').html(word)
+    if(flip_language){
+        $('#translate-to').html(word)
+    }else{
+        $('#translate-from').html(word)
+    }
 
     var url = `https://duolingo-lexicon-prod.duolingo.com/api/1/search?exactness=1&languageId=${lang_id}&query=${word}&uiLanguageId=${lang_id_ui}`
     $.getJSON(url, function(data){
@@ -110,7 +129,11 @@ var next_word = function(){
         if(!val.exactMatch) return(null)
         return val.translations[lang_id_ui]
         });
-        $('#translate-to').html(translations.join('<br>'))
+        if(flip_language){
+            $('#translate-from').html(translations.join('<br>'))
+        }else{
+            $('#translate-to').html(translations.join('<br>'))
+        }
 
 
     });
