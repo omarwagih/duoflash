@@ -38,11 +38,6 @@ var init_user = function(username){
         console.log('fetching user data')
         window.data = data
 
-        if(!data.language_data){
-            alert('Username not found!')
-            return;
-        }
-
         var d = data.language_data
         var learned_words = {}
         var unlearned_words = {}
@@ -92,6 +87,9 @@ var init_user = function(username){
 
 
 
+    }).fail(function() {
+        alert('Could not fetch data for this username. Please make sure username is correct.')
+        console.log( "error" );
     });
 
 }
