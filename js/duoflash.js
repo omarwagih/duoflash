@@ -34,7 +34,9 @@ var init_user = function(username){
         return;
     }
 
-    $.getJSON('https://serene-atoll-60587.herokuapp.com?q=' + username, function(data) {
+    url = 'https://serene-atoll-60587.herokuapp.com?t=users&q=' + username
+    console.log(url)
+    $.getJSON(url, function(data) {
         console.log('fetching user data')
         window.data = data
 
@@ -117,7 +119,9 @@ var next_word = function(refresh_word=true){
         $('#translate-from').html(word)
     }
 
-    var url = `https://duolingo-lexicon-prod.duolingo.com/api/1/search?exactness=1&languageId=${lang_id}&query=${word}&uiLanguageId=${lang_id_ui}`
+    //var url = `https://duolingo-lexicon-prod.duolingo.com/api/1/search?exactness=1&languageId=${lang_id}&query=${word}&uiLanguageId=${lang_id_ui}?callback=?`
+    var url = `https://serene-atoll-60587.herokuapp.com?t=translate&from_lang=${lang_id}&query=${word}&to_lang=${lang_id_ui}`
+    
     console.log(url)
     $.getJSON(url, function(data){
         window.d = data;
