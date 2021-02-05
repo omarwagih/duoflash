@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)https://getbootstrap.com/docs/5.0/examples/checkout/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Omar Wagih">
+    <meta name="generator" content="Hugo 0.79.0">
+    <title>Checkout example · Bootstrap v5.0</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/checkout/">
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="./index_files/bootstrap.min.css" rel="stylesheet">
+    <link href="./index_files/flip.css" rel="stylesheet">
+
+    <!-- Favicons -->
+    <link rel="icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/favicon.ico">
+<meta name="theme-color" content="#7952b3">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="./index_files/form-validation.css" rel="stylesheet">
+  </head>
+  <body class="bg-light">
+    
+<div class="container">
+  <main>
+    <div class="py-5 text-center">
+      <img class="d-block mx-auto mb-4" src="./index_files/bootstrap-logo.svg" alt="" width="72" height="57">
+      <h2>Duoflash</h2>
+      <p class="lead">Enter your duolingo username to get started.</p>
+      <center>
+        <input class="form-control" type="text" placeholder="" id="username" style="width:30%">
+      </center>
+    </div>
+  </main>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-8 mx-auto">
+        <div class="flip flip-vertical">
+          <div class="front">
+             <h1 id="translate-from">XXX</hi>
+          </div>
+          <div class="back">
+             <h1 id="translate-to">YYY</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+
+  <footer class="my-5 pt-5 text-muted text-center text-small">
+    <p class="mb-1">© 2017–2021 Company Name</p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="https://getbootstrap.com/docs/5.0/examples/checkout/#">Privacy</a></li>
+      <li class="list-inline-item"><a href="https://getbootstrap.com/docs/5.0/examples/checkout/#">Terms</a></li>
+      <li class="list-inline-item"><a href="https://getbootstrap.com/docs/5.0/examples/checkout/#">Support</a></li>
+    </ul>
+  </footer>
+</div>
+
+
+    <script src="./index_files/bootstrap.bundle.min.js"></script>
+    <script src="./index_files/form-validation.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/keypress/2.1.5/keypress.min.js"></script>
+    <script src="duolingo.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    
+
+    <script>
+
+const duo = new Duolingo({userName:'wagihoma', password:'XX'});
+
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", 'https://www.duolingo.com/login', true);
+      xhr.send( JSON.stringify({login:'wagihoma', password:'XXX'}) );
+      
+
+
+
+
+
+      
+      $.getJSON('data.json', function(data) {
+        console.log('fetching user data')
+        window.data = data
+
+
+        var d = data.language_data
+        var learned_words = {}
+        var unlearned_words = {}
+
+        var language_keys = Object.keys(d);
+        window.lang_data = [];
+        for(var i = 0; i < language_keys.length; i++){
+          var ld = d[language_keys[i]]
+
+          var lang = ld.language_string
+          console.log('Processing: ' + lang)
+          var lang_id_ui = ld.tracking_properties.ui_language 
+          var lang_id = ld.tracking_properties.learning_language 
+
+          var learned_words = []
+          var unlearned_words = []
+          
+
+          for(var j = 0; j < ld.skills.length; j++){
+            if(ld.skills[j].learned){
+              learned_words = learned_words.concat(ld.skills[j].words)
+            }else{
+              unlearned_words = unlearned_words.concat(ld.skills[j].words)
+            }
+          }
+          // Remove words that contain numbers
+          unlearned_words = unlearned_words.filter(function(a){return !/\d/.test(a)})
+          learned_words = learned_words.filter(function(a){return !/\d/.test(a)})
+
+          lang_data.push({
+            'lang': lang,
+            'lang_id_ui': lang_id_ui,
+            'lang_id': lang_id,
+            'learned_words' : learned_words,
+            'unlearned_words': unlearned_words
+          })
+        }
+        next_word();
+
+        var listener = new window.keypress.Listener();
+        listener.simple_combo("space", function() {
+          next_word();
+        });
+
+
+      });
+
+
+      $.getJSON('https://duolingo-lexicon-prod.duolingo.com/api/1/complete?languageId=es&query=cafetera&uiLanguageId=en', function(data) {
+        console.log('fetching translation')
+        window.t = data
+      });
+      
+      Array.prototype.sample = function(){
+        return this[Math.floor(Math.random()*this.length)];
+      }
+
+
+      var next_word = function(){
+        console.log('next word')
+
+        var w = lang_data[0].learned_words
+        window.word = w.sample();
+        var lang_id_ui = lang_data[0].lang_id_ui
+        var lang_id = lang_data[0].lang_id
+
+        $('#translate-from').html(word)
+
+        var url = `https://duolingo-lexicon-prod.duolingo.com/api/1/search?exactness=1&languageId=${lang_id}&query=${word}&uiLanguageId=${lang_id_ui}`
+        $.getJSON(url, function(data){
+          window.d = data;
+          var translations = $.map( d.results, function( val ) {
+            // Keep exact matches only
+            if(!val.exactMatch) return(null)
+            return val.translations[lang_id_ui]
+          });
+          $('#translate-to').html(translations.join('<br>'))
+
+
+        });
+
+
+      }
+
+
+
+      $(document).ready(function() {
+
+        var s_round = '.s_round';
+
+        $(s_round).hover(function() {
+          $('.b_round').toggleClass('b_round_hover');
+          return false;
+        });
+
+        $(s_round).click(function() {
+          $('.flip_box').toggleClass('flipped');
+          $(this).addClass('s_round_click');
+          $('.s_arrow').toggleClass('s_arrow_rotate');
+          $('.b_round').toggleClass('b_round_back_hover');
+          return false;
+        });
+
+        $(s_round).on('transitionend', function() {
+          $(this).removeClass('s_round_click');
+          $(this).addClass('s_round_back');
+          return false;
+        });
+        });
+
+    </script>
+
+</body></html>
