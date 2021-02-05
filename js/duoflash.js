@@ -4,16 +4,25 @@ Array.prototype.sample = function(){
     return this[Math.floor(Math.random()*this.length)];
 }
 
+var DUOFLASH_USERNAME = 'DUOFLASH_USERNAME'
 
 window.flip_language = false
+
 
 $(document).ready(function(){
     $('#username').keypress(function (e) {
         if (e.which == 13) {
-            init_user($('#username').val())
+            var username = $('#username').val();
+            init_user(username)
             return false;
         }
-      });
+    });
+
+    var existing_username = localStorage.getItem(DUOFLASH_USERNAME);
+    if(existing_username != ''){
+        $('#username').val(existing_username);
+        init_user(existing_username)
+    }
 
     $('#flip-language').change(function(){
         if($('#flip-language').is(':checked')){
@@ -28,11 +37,10 @@ $(document).ready(function(){
 
 
 var init_user = function(username){
+
+    localStorage.setItem(DUOFLASH_USERNAME, username);
+    
     console.log('Initializing user:' + username)
-    if(!username){
-        alert('Username cannot be blank!')
-        return;
-    }
 
     url = 'https://serene-atoll-60587.herokuapp.com?t=users&q=' + username
     console.log(url)
@@ -70,6 +78,9 @@ var init_user = function(username){
             unlearned_words = unlearned_words.filter(function(a){return !/\d/.test(a)})
             learned_words = learned_words.filter(function(a){return !/\d/.test(a)})
 
+            // Skip language if no learned words
+            if(learned_words.length == 0) continue;
+
             lang_data.push({
             'lang': lang,
             'lang_id_ui': lang_id_ui,
@@ -78,6 +89,14 @@ var init_user = function(username){
             'unlearned_words': unlearned_words
             })
         }
+
+        if(lang_data.length == 0){
+            alert('No language data/learned words found')
+            $('#username').val('')
+            localStorage.setItem(DUOFLASH_USERNAME, '');
+            return;
+        }
+
         next_word();
         $('#flip-container').slideDown();
         $('#username').blur();
@@ -89,7 +108,7 @@ var init_user = function(username){
 
 
 
-    }).fail(function() {
+    }).fail(function(e) {
         alert('Could not fetch data for this username. Please make sure username is correct.')
         console.log( "error" );
     });
@@ -108,6 +127,10 @@ var next_word = function(refresh_word=true){
 
     if(refresh_word){
         var w = lang_data[0].learned_words
+        if(w.length == 0){
+            alert('Error: No learned words found, aborting!')
+            return;
+        }
         window.word = w.sample();
     }
     var lang_id_ui = lang_data[0].lang_id_ui
