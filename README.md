@@ -1,6 +1,7 @@
-![](https://omarwagih.github.io/duoflash/images/tinycards.png)
+<img src="https://omarwagih.github.io/duoflash/images/tinycards.png" width=170>
 
-# DuoFlash
-DuoFlash is an application that allows you to practice words you have learned on Duolingo through flashcards.
+# Duoflash: flashcards for Duolingo
+Duoflash is an application that allows you to practice words you have learned on Duolingo through flashcards.
 
-## Access DuoFlash [here](https://omarwagih.github.io/duoflash/)
+Duoflash can be accessed [here](https://omarwagih.github.io/duoflash/)
+
