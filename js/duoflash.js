@@ -163,11 +163,6 @@ var next_word = function(refresh_word=true){
     var lang_id_ui = lang_data[0].lang_id_ui
     var lang_id = lang_data[0].lang_id
 
-    if(flip_language){
-        $('#translate-to').html(word)
-    }else{
-        $('#translate-from').html(word)
-    }
 
     //var url = `https://duolingo-lexicon-prod.duolingo.com/api/1/search?exactness=1&languageId=${lang_id}&query=${word}&uiLanguageId=${lang_id_ui}?callback=?`
     var url = `https://serene-atoll-60587.herokuapp.com?t=translate&from_lang=${lang_id}&query=${word}&to_lang=${lang_id_ui}`
@@ -209,8 +204,10 @@ var next_word = function(refresh_word=true){
 
         //translations = [translations[0]]
         if(flip_language){
+            $('#translate-to').html(word)
             $('#translate-from').html(translations.join('<br>'))
         }else{
+            $('#translate-from').html(word)
             $('#translate-to').html(translations.join('<br>'))
         }
 
