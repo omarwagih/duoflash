@@ -119,6 +119,7 @@ var init_user = function(username){
             });
 
             $('#help-text-events').text('tap on the card to reveal translation, tap outside the card to flip back, swipe right for the next word')
+            $('.flip > .front,.flip > .back').css('transition-duration', '0s')
         }else{
             console.log('-- Running on browser --')
             var listener = new window.keypress.Listener();
