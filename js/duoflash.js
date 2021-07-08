@@ -49,6 +49,7 @@ var init_user = function(username){
 
     url = 'https://serene-atoll-60587.herokuapp.com?t=users&q=' + username
     console.log(url)
+
     $.getJSON(url, function(data) {
         console.log('fetching user data')
         window.data = data
@@ -132,7 +133,7 @@ var init_user = function(username){
 
 
     }).fail(function(e) {
-        alert('Could not fetch data for this username. Please make sure username is correct.')
+        alert('Could not fetch data for this username. Please make sure username is correct and that your profile is not set to private.')
         console.log( "error" );
     });
 
