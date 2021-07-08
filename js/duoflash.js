@@ -199,11 +199,9 @@ var next_word = function(refresh_word=true){
             return false;
         }
 
-        // var translations = $.map( d.results, function( val ) {
-        //     // Keep exact matches only
-        //     if(!val.exactMatch) return(null)
-        //     return val.translations[lang_id_ui]
-        // });
+
+        if(translations.length > 4)
+            translations = translations.slice(0, 4)
 
         //translations = [translations[0]]
         if(flip_language){
