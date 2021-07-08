@@ -52,13 +52,20 @@ var init_user = function(username){
 
     $.getJSON(url, function(data) {
         console.log('fetching user data')
-        window.data = data
+        window.all_data = data
 
         var d = data.language_data
         var learned_words = {}
         var unlearned_words = {}
 
         var language_keys = Object.keys(d);
+        window.language_keys = language_keys
+
+        if(language_keys[0] == 'en'){
+            alert('Duoflash for english is not yet supported :( check back again soon')
+            return false;
+        }
+
         window.lang_data = [];
         for(var i = 0; i < language_keys.length; i++){
             var ld = d[language_keys[i]]
@@ -107,10 +114,6 @@ var init_user = function(username){
         $('#flip-container').slideDown();
         $('#username').blur();
 
-
-        document.addEventListener('dblclick', function(){
-            console.log('DBLclick')
-        }); 
 
         if(is_mobile_or_tablet()){
             console.log('-- Running on mobile or tablet --')
