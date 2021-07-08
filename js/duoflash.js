@@ -144,20 +144,45 @@ var next_word = function(refresh_word=true){
 
     //var url = `https://duolingo-lexicon-prod.duolingo.com/api/1/search?exactness=1&languageId=${lang_id}&query=${word}&uiLanguageId=${lang_id_ui}?callback=?`
     var url = `https://serene-atoll-60587.herokuapp.com?t=translate&from_lang=${lang_id}&query=${word}&to_lang=${lang_id_ui}`
-    
+    url = encodeURI(url)
+
     console.log(url)
     $.getJSON(url, function(data){
         window.d = data;
         if(d.results.length == 0){
             console.log('skipping word, no translation found for: ' + word)
             next_word(refresh_word=true)
+            return false;
         }
 
-        var translations = $.map( d.results, function( val ) {
-        // Keep exact matches only
-        if(!val.exactMatch) return(null)
-        return val.translations[lang_id_ui]
-        });
+        exact_translations = []
+        non_exact_translations = []
+
+        for(i = 0; i<d.results.length; i ++){
+            val = d.results[i]
+            t = val.translations[lang_id_ui]
+            if(val.exactMatch){
+                exact_translations = exact_translations.concat(t)
+            }else{
+                non_exact_translations = non_exact_translations.concat(t)
+            }
+        }
+
+        translations = exact_translations
+        if(exact_translations.length == 0){
+            //translations = non_exact_translations
+            next_word(refresh_word=true)
+            console.log('skipping non-exact translations since they are not always right')
+            return false;
+        }
+
+        // var translations = $.map( d.results, function( val ) {
+        //     // Keep exact matches only
+        //     if(!val.exactMatch) return(null)
+        //     return val.translations[lang_id_ui]
+        // });
+
+        //translations = [translations[0]]
         if(flip_language){
             $('#translate-from').html(translations.join('<br>'))
         }else{
